@@ -37,7 +37,7 @@ class DateType extends AbstractType
     {
         $this->options = $options;
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -72,6 +72,14 @@ class DateType extends AbstractType
             'configs' => $configs,
             'culture' => $options['culture'],
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
     }
 
     /**

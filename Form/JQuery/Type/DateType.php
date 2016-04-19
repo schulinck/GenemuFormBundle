@@ -12,11 +12,12 @@
 namespace Genemu\Bundle\FormBundle\Form\JQuery\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType as BaseDateType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateType as BaseDateType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * DateType
@@ -36,7 +37,7 @@ class DateType extends AbstractType
     {
         $this->options = $options;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -76,7 +77,7 @@ class DateType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $configs = $this->options;
 
@@ -89,16 +90,14 @@ class DateType extends AbstractType
                     'dateFormat' => null,
                 ),
             ))
-            ->setNormalizers(array(
-                'configs' => function (Options $options, $value) use ($configs) {
-                    $result = array_merge($configs, $value);
-                    if ('single_text' !== $options['widget'] || isset($result['buttonImage'])) {
-                        $result['showOn'] = 'button';
-                    }
-
-                    return $result;
+            ->setNormalizer('configs', function (Options $options, $value) use ($configs) {
+                $result = array_merge($configs, $value);
+                if ('single_text' !== $options['widget'] || isset($result['buttonImage'])) {
+                    $result['showOn'] = 'button';
                 }
-            ));
+
+                return $result;
+            });
     }
 
     /**
@@ -106,7 +105,7 @@ class DateType extends AbstractType
      */
     public function getParent()
     {
-        return 'date';
+        return BaseDateType::class;
     }
 
     /**
@@ -115,6 +114,15 @@ class DateType extends AbstractType
     public function getName()
     {
         return 'genemu_jquerydate';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'genemu_jquerydate';
+
     }
 
     /**
